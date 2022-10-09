@@ -1,20 +1,23 @@
 {
-  "name": "mock",
+  "name": "local-mock-server",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "mock": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YolandaKisses/local-mock-server.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@koa/cors": "^3.1.0",
-    "glob": "^7.1.6",
-    "koa": "^2.13.1",
-    "koa-body": "^4.2.0",
-    "koa-logger": "^3.2.1",
-    "koa-router": "^10.0.0"
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-cors": "0.0.16",
+    "koa-router": "^12.0.0",
+    "mockjs": "^1.1.0"
   }
 }
