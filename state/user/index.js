@@ -39,5 +39,22 @@ router.get("/list", async (ctx) => {
   }
 });
 
+router.post("/delete", async (ctx) => {
+  const { id } = ctx.request.body
+  if (id) {
+    const _index = userList.findIndex(item => item.id === id)
+    userList.splice(_index, 1)
+    ctx.body = {
+      data: '删除成功',
+      resutCode: "1"
+    };
+  } else {
+    ctx.body = {
+      data: "未传id, 无法删除",
+      resutCode: "0"
+    };
+  }
+});
+
 // 导出 router 实例
 module.exports = router;
