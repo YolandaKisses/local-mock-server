@@ -13,9 +13,9 @@ for (let i = 0; i < count; i++) {
     Mock.mock({
       id: "@id",
       name: Mock.Random.cname(),
-      isMale:'@boolean',
+      isMale: "@integer(1, 2)",
       mail: "@email",
-      address:'@county(true)',
+      address: "@county(true)"
     })
   );
 }
@@ -23,10 +23,20 @@ for (let i = 0; i < count; i++) {
 //ctx.query  参数传值
 //ctx.request.body Post参数
 router.get("/list", async (ctx) => {
-  ctx.body = {
-    data: userList,
-    resutCode: "1"
-  };
+  let filterlist = [];
+  const { selectVal } = ctx.query
+  if (selectVal) {
+    filterlist = userList.filter((item) => item.isMale.toString() === selectVal);
+    ctx.body = {
+      data: filterlist,
+      resutCode: "1"
+    };
+  } else {
+    ctx.body = {
+      data: userList,
+      resutCode: "1"
+    };
+  }
 });
 
 // 导出 router 实例
