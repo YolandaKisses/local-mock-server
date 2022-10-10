@@ -2,10 +2,11 @@ const Router = require("koa-router");
 const Mock = require("mockjs");
 
 const router = new Router({
-  //设置前缀
+  //设置接口前缀
   prefix: "/user"
 });
 
+// 循环mock数据
 let userList = [];
 const count = 5;
 for (let i = 0; i < count; i++) {
