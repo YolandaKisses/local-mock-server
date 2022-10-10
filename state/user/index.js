@@ -7,7 +7,7 @@ const router = new Router({
 });
 
 let userList = [];
-const count = 15;
+const count = 5;
 for (let i = 0; i < count; i++) {
   userList.push(
     Mock.mock({
