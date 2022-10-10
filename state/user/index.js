@@ -33,7 +33,9 @@ router.get("/list", async (ctx) => {
   // 定义过滤数组
   let filterlist = [];
   // 接收get传参
-  const { selectVal } = ctx.query
+  const {
+    selectVal
+  } = ctx.query
   if (selectVal) {
     // 根据查询条件过滤相应数据返回
     filterlist = userList.filter((item) => item.isMale.toString() === selectVal);
@@ -56,7 +58,9 @@ router.get("/list", async (ctx) => {
 //ctx.request.body Post参数
 router.post("/delete", async (ctx) => {
   // 接受post传参
-  const { id } = ctx.request.body
+  const {
+    id
+  } = ctx.request.body
   // 判断id存在则根据id找到目标数据调用splice方式删除
   if (id) {
     const _index = userList.findIndex(item => item.id === id)
@@ -70,6 +74,34 @@ router.post("/delete", async (ctx) => {
     ctx.body = {
       data: "未传id, 无法删除",
       resutCode: "0"
+    };
+  }
+});
+
+// 新增 / 编辑 => update接口
+//ctx.params 路由传值
+//ctx.query  参数传值
+//ctx.request.body Post参数
+router.post("/update", async (ctx) => {
+  // 接受post传参
+  const {
+    row
+  } = ctx.request.body
+  // 判断row.id存在则根据row.id找到目标数据调用splice方式替换
+  if (row.id) {
+    const _index = userList.findIndex(item => item.id === row.id)
+    userList.splice(_index, 1, row)
+    ctx.body = {
+      data: '编辑成功',
+      resutCode: "1"
+    };
+  } else {
+    row['id'] = Math.floor(Math.random() * 100 + 1)
+    userList.unshift(row)
+    // row不存在则返回错误信息
+    ctx.body = {
+      data: "新增成功",
+      resutCode: "1"
     };
   }
 });
