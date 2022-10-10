@@ -1,3 +1,7 @@
+/**
+ * 示例代码
+ * 用户列表模块mock-curd接口
+ */
 const Router = require("koa-router");
 const Mock = require("mockjs");
 
@@ -8,7 +12,7 @@ const router = new Router({
 
 // 循环mock数据
 let userList = [];
-const count = 5;
+const count = 8;
 for (let i = 0; i < count; i++) {
   userList.push(
     Mock.mock({
