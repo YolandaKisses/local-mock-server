@@ -19,6 +19,7 @@ for (let i = 0; i < count; i++) {
     })
   );
 }
+
 //ctx.params 路由传值
 //ctx.query  参数传值
 //ctx.request.body Post参数
@@ -39,6 +40,9 @@ router.get("/list", async (ctx) => {
   }
 });
 
+//ctx.params 路由传值
+//ctx.query  参数传值
+//ctx.request.body Post参数
 router.post("/delete", async (ctx) => {
   const { id } = ctx.request.body
   if (id) {
