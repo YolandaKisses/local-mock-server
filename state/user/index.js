@@ -96,9 +96,9 @@ router.post("/update", async (ctx) => {
       resutCode: "1"
     };
   } else {
+    // row.id不存在则视为新增数据，添加id字段将数据unshift
     row['id'] = Math.floor(Math.random() * 100 + 1)
     userList.unshift(row)
-    // row不存在则返回错误信息
     ctx.body = {
       data: "新增成功",
       resutCode: "1"
