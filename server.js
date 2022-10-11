@@ -2,6 +2,9 @@ const Koa = require("koa");
 const app = new Koa();
 const Router = require("koa-router");
 const router = new Router();
+const koaBody = require("koa-body"); // 将请求报文和响应报文转化成可读数据
+const cors = require("koa2-cors"); // 跨域
+
 // 解析post请求数据到ctx.request.body的中间件
 const bodyParser = require("koa-bodyparser");
 app.use(bodyParser());
@@ -10,7 +13,34 @@ app.use(bodyParser());
 // 在加了router.allowedMethods()中间件情况下，如果接口是get请求，而前端使用post请求，会返回405 Method Not Allowed ，提示方法不被允许 ，
 // 并在响应头有添加允许的请求方式；
 // 而在不加这个中间件这种情况下，则会返回 404 Not Found找不到请求地址，并且响应头没有添加允许的请求方式
-app.use(router.routes()).use(router.allowedMethods());
+
+app
+  .use(
+    koaBody({
+      multipart: true, // 允许上传或下载文件
+      formidable: {
+        maxFileSize: 200 * 1024 * 1024 // 限制上传或下载的文件的大小
+      }
+    })
+  )
+  .use(
+    cors({
+      origin: function (ctx) {
+        // 可以放行/限制某些域名请求的跨域
+        if (ctx.url === "/test") {
+          return false;
+        }
+        return "*";
+      },
+      exposeHeaders: ["WWW-Authenticate", "Server-Authorization"],
+      maxAge: 5,
+      credentials: true,
+      allowMethods: ["GET", "POST", "DELETE"],
+      allowHeaders: ["Content-Type", "Authorization", "Accept"]
+    })
+  )
+  .use(router.routes())
+  .use(router.allowedMethods());
 
 // user Api  ===> 用户列表相关mock
 const user = require("./state/user/index");
@@ -21,8 +51,5 @@ app.use(user.routes(), user.allowedMethods());
 let port = 3000;
 // 监听当前mock服务启动
 app.listen(port, (ctx) => {
-  console.log("服务启动成功:http://localhost:" + port);
-  router.get("/", async (ctx, next) => {
-    ctx.body = `<h1>当你看到此页面时表示服务启动成功</h1>`;
-  });
+  console.log("koa is listening in: http://localhost:" + port);
 });
