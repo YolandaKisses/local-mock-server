@@ -14,33 +14,7 @@ app.use(bodyParser());
 // 并在响应头有添加允许的请求方式；
 // 而在不加这个中间件这种情况下，则会返回 404 Not Found找不到请求地址，并且响应头没有添加允许的请求方式
 
-app
-  .use(
-    koaBody({
-      multipart: true, // 允许上传或下载文件
-      formidable: {
-        maxFileSize: 200 * 1024 * 1024 // 限制上传或下载的文件的大小
-      }
-    })
-  )
-  .use(
-    cors({
-      origin: function (ctx) {
-        // 可以放行/限制某些域名请求的跨域
-        if (ctx.url === "/test") {
-          return false;
-        }
-        return "*";
-      },
-      exposeHeaders: ["WWW-Authenticate", "Server-Authorization"],
-      maxAge: 5,
-      credentials: true,
-      allowMethods: ["GET", "POST", "DELETE"],
-      allowHeaders: ["Content-Type", "Authorization", "Accept"]
-    })
-  )
-  .use(router.routes())
-  .use(router.allowedMethods());
+app.use(router.routes()).use(router.allowedMethods());
 
 // user Api  ===> 用户列表相关mock
 const user = require("./state/user/index");

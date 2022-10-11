@@ -101,12 +101,5 @@ router.post("/update", async (ctx) => {
   }
 });
 
-// 下载
-router.get("/download", async (ctx) => {
-  const path = "/static/test.xlsx";
-  ctx.attachment(path);
-  await send(ctx, path);
-});
-
 // 导出 router 实例
 module.exports = router;
