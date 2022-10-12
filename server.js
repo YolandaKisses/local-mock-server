@@ -2,8 +2,6 @@ const Koa = require("koa");
 const app = new Koa();
 const Router = require("koa-router");
 const router = new Router();
-const koaBody = require("koa-body"); // 将请求报文和响应报文转化成可读数据
-const cors = require("koa2-cors"); // 跨域
 
 // 解析post请求数据到ctx.request.body的中间件
 const bodyParser = require("koa-bodyparser");

@@ -4,7 +4,6 @@
  */
 const Router = require("koa-router");
 const Mock = require("mockjs");
-const send = require("koa-send"); 
 
 const router = new Router({
   //设置接口前缀
