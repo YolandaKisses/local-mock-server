@@ -8,12 +8,6 @@ const koaBody = require("koa-body");
 const bodyParser = require("koa-bodyparser");
 app.use(bodyParser());
 
-// 将koa和中间件连起来
-// 在加了router.allowedMethods()中间件情况下，如果接口是get请求，而前端使用post请求，会返回405 Method Not Allowed ，提示方法不被允许 ，
-// 并在响应头有添加允许的请求方式；
-// 而在不加这个中间件这种情况下，则会返回 404 Not Found找不到请求地址，并且响应头没有添加允许的请求方式
-app.use(router.routes()).use(router.allowedMethods());
-
 // 引用koa-body中间件
 app.use(
   koaBody({
@@ -23,6 +17,12 @@ app.use(
     }
   })
 );
+
+// 将koa和中间件连起来
+// 在加了router.allowedMethods()中间件情况下，如果接口是get请求，而前端使用post请求，会返回405 Method Not Allowed ，提示方法不被允许 ，
+// 并在响应头有添加允许的请求方式；
+// 而在不加这个中间件这种情况下，则会返回 404 Not Found找不到请求地址，并且响应头没有添加允许的请求方式
+app.use(router.routes()).use(router.allowedMethods());
 
 // user Api  ===> 用户列表相关mock
 const user = require("./state/user/index");

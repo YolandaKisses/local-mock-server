@@ -5,6 +5,7 @@
 const Router = require("koa-router");
 const Mock = require("mockjs");
 const nodexlsx = require("node-xlsx");
+const xlsx = require("xlsx");
 const send = require("koa-send");
 // 文件系统模块
 const fs = require("fs");
@@ -148,22 +149,68 @@ router.get("/download", async (ctx) => {
   await send(ctx, path);
 });
 
+// 读取excel文件
+function getFile(reader, upStream) {
+  return new Promise(function (result) {
+    let stream = reader.pipe(upStream); // 可读流通过管道写入可写流
+    stream.on("finish", function (err) {
+      result(err);
+    });
+  });
+}
+
 // 上传单个文件 uploadfile
 // ctx.request.files.file; 获取上传文件
 router.post("/uploadfile", async (ctx, next) => {
-  const file = ctx.request.files.file; // 获取上传文件
+  // 获取上传文件
+  const file = ctx.request.files.file; 
   // 创建可读流
   const reader = fs.createReadStream(file.filepath);
   // 上传至path
   let filePath = path.join(__dirname, "../upload") + `/${file.originalFilename}`;
   // 创建可写流
   const upStream = fs.createWriteStream(filePath);
-  // 可读流通过管道写入可写流
-  reader.pipe(upStream);
-  ctx.body = {
-    data: "上传成功",
-    resutCode: "1"
-  };
+  //等待数据存储完成
+  const getRes = await getFile(reader, upStream); 
+
+  // 读取xls数据
+  const datas = []
+  if (!getRes) { //没有问题
+    const workbook = xlsx.readFile(filePath);
+    // 返回 ['sheet1', ...]
+    const sheetNames = workbook.SheetNames; 
+    // 可能存在sheet1, 2, 3 的情况需循环
+    for (const sheetName of sheetNames) {
+      const worksheet = workbook.Sheets[sheetName];
+      const data = xlsx.utils.sheet_to_json(worksheet);
+      datas.push(data);
+    }
+    // 导入新增的数据
+    const addList = []
+    // 组装数据
+    datas.forEach((item) => {
+      for (let key in item) {
+        addList.push({
+          id: Math.floor(Math.random() * 100 + 1),
+          name: item[key]['名称'],
+          isMale: item[key]['性别'] == '男' ? '1' : '2',
+          mail: item[key]['邮箱'],
+          address: item[key]['地址']
+        })
+      }
+    })
+    // 和userList合并
+    userList = userList.concat(addList)
+    ctx.body = {
+      data: "上传成功",
+      resutCode: "1"
+    };
+  } else {
+     ctx.body = {
+      data: "上传失败",
+      resutCode: "0"
+    };
+  }
 });
 
 // 导出 router 实例
