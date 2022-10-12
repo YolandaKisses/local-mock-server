@@ -5,8 +5,9 @@
 const Router = require("koa-router");
 const Mock = require("mockjs");
 const nodexlsx = require("node-xlsx");
-const fs = require("fs");
 const send = require("koa-send");
+const fs = require("fs");
+const path = require("path")
 
 const router = new Router({
   //设置接口前缀
@@ -151,6 +152,20 @@ router.get("/download", async (ctx) => {
   // 调用send方式进行导出
   ctx.attachment(path);
   await send(ctx, path);
+});
+
+// 上传接口 uploadfile
+router.post('/uploadfile', async (ctx, next) => {
+  // 上传单个文件
+  const file = ctx.request.files.file; // 获取上传文件
+  // 创建可读流
+  const reader = fs.createReadStream(file.filepath);
+  let filePath = path.join(__dirname, '../upload') + `/${file.originalFilename}`;
+  // 创建可写流
+  const upStream = fs.createWriteStream(filePath);
+  // 可读流通过管道写入可写流
+  reader.pipe(upStream);
+  return ctx.body = "上传成功！";
 });
 
 // 导出 router 实例
