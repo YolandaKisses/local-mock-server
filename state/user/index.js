@@ -6,6 +6,7 @@ const Router = require("koa-router");
 const Mock = require("mockjs");
 const nodexlsx = require("node-xlsx");
 const send = require("koa-send");
+// 文件系统模块
 const fs = require("fs");
 const path = require("path");
 
@@ -141,18 +142,19 @@ router.get("/download", async (ctx) => {
   fs.writeFileSync("download" + ".xlsx", _buffer);
   // xlsx文件位置
   const path = "/download.xlsx";
-  // 调用send方式进行导出
+  // 根据path生成附件
   ctx.attachment(path);
+  // 调用send方式进行导出
   await send(ctx, path);
 });
 
-// 上传接口 uploadfile
+// 上传单个文件 uploadfile
 // ctx.request.files.file; 获取上传文件
 router.post("/uploadfile", async (ctx, next) => {
-  // 上传单个文件
   const file = ctx.request.files.file; // 获取上传文件
   // 创建可读流
   const reader = fs.createReadStream(file.filepath);
+  // 上传至path
   let filePath = path.join(__dirname, "../upload") + `/${file.originalFilename}`;
   // 创建可写流
   const upStream = fs.createWriteStream(filePath);
