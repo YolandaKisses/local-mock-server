@@ -4,10 +4,6 @@ const Router = require("koa-router");
 const router = new Router();
 const koaBody = require("koa-body");
 
-// 解析post请求数据到ctx.request.body的中间件
-const bodyParser = require("koa-bodyparser");
-app.use(bodyParser());
-
 // 引用koa-body中间件
 app.use(
   koaBody({
