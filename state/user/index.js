@@ -155,6 +155,7 @@ router.get("/download", async (ctx) => {
 });
 
 // 上传接口 uploadfile
+// ctx.request.files.file; 获取上传文件
 router.post('/uploadfile', async (ctx, next) => {
   // 上传单个文件
   const file = ctx.request.files.file; // 获取上传文件
