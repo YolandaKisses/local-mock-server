@@ -4,6 +4,9 @@
  */
 const Router = require("koa-router");
 const Mock = require("mockjs");
+const xlsx = require("node-xlsx");
+const fs = require("fs");
+const send = require("koa-send");
 
 const router = new Router({
   //设置接口前缀
@@ -30,11 +33,11 @@ for (let i = 0; i < count; i++) {
 //ctx.query  参数传值
 //ctx.request.body Post参数
 router.get("/list", async (ctx) => {
-  // 定义过滤数组
-  let filterlist = [];
   // 接收get传参
   const { selectVal } = ctx.query;
   if (selectVal) {
+    // 定义过滤数组
+    let filterlist = [];
     // 根据查询条件过滤相应数据返回
     filterlist = userList.filter((item) => item.isMale.toString() === selectVal);
     ctx.body = {
@@ -98,6 +101,61 @@ router.post("/update", async (ctx) => {
       resutCode: "1"
     };
   }
+});
+
+// 下载接口 download
+//ctx.params 路由传值
+//ctx.query  参数传值
+//ctx.request.body Post参数
+router.get("/download", async (ctx) => {
+  // excel 表头数据
+  const data = [['id' ,"名称", "性别", "邮箱", "地址"]];
+  // 接受参数
+  const { selectVal } = ctx.query;
+  // 如果有查询参数根据条件过滤数据后生成xlsx
+  if (selectVal) {
+    // 定义过滤数组
+    let filterlist = [];
+    // 根据查询条件过滤相应数据返回
+    filterlist = userList.filter((item) => item.isMale.toString() === selectVal);
+    // 将list结构 转化为多维数组
+    filterlist.forEach((item, i) => {
+      data.push([]);
+      for (let key in item) {
+        data[i + 1].push(item[key]);
+      }
+    });
+    // 生成xlsx
+    var _buffer = xlsx.build([
+      {
+        name: "sheet1",
+        data: data
+      }
+    ]);
+  } else {
+    // 如果没有查询参数直接生成xlsx
+    // 将list结构 转化为多维数组
+    userList.forEach((item, i) => {
+      data.push([]);
+      for (let key in item) {
+        data[i + 1].push(item[key]);
+      }
+    });
+    // 生成xlsx
+    var _buffer = xlsx.build([
+      {
+        name: "sheet1",
+        data: data
+      }
+    ]);
+  }
+  // 调用writeFileSync 生成download.xlsx，_buffer为文件内容
+  fs.writeFileSync("download" + ".xlsx", _buffer);
+  // xlsx文件位置
+  const path = "/download.xlsx";
+  // 调用send方式进行导出
+  ctx.attachment(path);
+  await send(ctx, path);
 });
 
 // 导出 router 实例
