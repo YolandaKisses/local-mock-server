@@ -34,7 +34,9 @@ for (let i = 0; i < count; i++) {
 //ctx.request.body Post参数
 router.get("/list", async (ctx) => {
   // 接收get传参
-  const { selectVal } = ctx.query;
+  const {
+    selectVal
+  } = ctx.query;
   if (selectVal) {
     // 定义过滤数组
     let filterlist = [];
@@ -59,7 +61,9 @@ router.get("/list", async (ctx) => {
 //ctx.request.body Post参数
 router.post("/delete", async (ctx) => {
   // 接受post传参
-  const { id } = ctx.request.body;
+  const {
+    id
+  } = ctx.request.body;
   // 判断id存在则根据id找到目标数据调用splice方式删除
   if (id) {
     const _index = userList.findIndex((item) => item.id === id);
@@ -83,7 +87,9 @@ router.post("/delete", async (ctx) => {
 //ctx.request.body Post参数
 router.post("/update", async (ctx) => {
   // 接受post传参
-  const { row } = ctx.request.body;
+  const {
+    row
+  } = ctx.request.body;
   // 判断row.id存在则根据row.id找到目标数据调用splice方式替换
   if (row.id) {
     const _index = userList.findIndex((item) => item.id === row.id);
@@ -108,47 +114,36 @@ router.post("/update", async (ctx) => {
 //ctx.query  参数传值
 //ctx.request.body Post参数
 router.get("/download", async (ctx) => {
+  // excel 导出表数据
+  let downloadList = []
   // excel 表头数据
-  const data = [['id' ,"名称", "性别", "邮箱", "地址"]];
+  const data = [
+    ['id', "名称", "性别", "邮箱", "地址"]
+  ];
   // 接受参数
-  const { selectVal } = ctx.query;
+  const {
+    selectVal
+  } = ctx.query;
   // 如果有查询参数根据条件过滤数据后生成xlsx
   if (selectVal) {
-    // 定义过滤数组
-    let filterlist = [];
     // 根据查询条件过滤相应数据返回
-    filterlist = userList.filter((item) => item.isMale.toString() === selectVal);
-    // 将list结构 转化为多维数组
-    filterlist.forEach((item, i) => {
-      data.push([]);
-      for (let key in item) {
-        data[i + 1].push(item[key]);
-      }
-    });
-    // 生成xlsx
-    var _buffer = xlsx.build([
-      {
-        name: "sheet1",
-        data: data
-      }
-    ]);
+    downloadList = userList.filter((item) => item.isMale.toString() === selectVal);
   } else {
     // 如果没有查询参数直接生成xlsx
-    // 将list结构 转化为多维数组
-    userList.forEach((item, i) => {
-      data.push([]);
-      for (let key in item) {
-        data[i + 1].push(item[key]);
-      }
-    });
-    // 生成xlsx
-    var _buffer = xlsx.build([
-      {
-        name: "sheet1",
-        data: data
-      }
-    ]);
+    downloadList = JSON.parse(JSON.stringify(userList))
   }
+  // 将list数据根据行转换为二维数组
+  downloadList.forEach((item, i) => {
+    data.push([]);
+    for (let key in item) {
+      data[i + 1].push(item[key]);
+    }
+  });
+  // 生成xlsx
+  var _buffer = xlsx.build([{
+    name: "sheet1",
+    data: data
+  }]);
   // 调用writeFileSync 生成download.xlsx，_buffer为文件内容
   fs.writeFileSync("download" + ".xlsx", _buffer);
   // xlsx文件位置
