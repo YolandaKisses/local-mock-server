@@ -4,7 +4,7 @@
  */
 const Router = require("koa-router");
 const Mock = require("mockjs");
-const xlsx = require("node-xlsx");
+const nodexlsx = require("node-xlsx");
 const fs = require("fs");
 const send = require("koa-send");
 
@@ -140,7 +140,7 @@ router.get("/download", async (ctx) => {
     }
   });
   // 生成xlsx
-  var _buffer = xlsx.build([{
+  var _buffer = nodexlsx.build([{
     name: "sheet1",
     data: data
   }]);
