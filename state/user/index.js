@@ -97,7 +97,7 @@ router.post("/update", async (ctx) => {
     };
   } else {
     // row.id不存在则视为新增数据，添加id字段将数据unshift
-    row["id"] = Math.floor(Math.random() * 100 + 1);
+    row["id"] = (Math.floor(Math.random() * 100 + 1)).toString();
     userList.unshift(row);
     ctx.body = {
       data: "新增成功",
@@ -127,6 +127,7 @@ router.get("/download", async (ctx) => {
   }
   // 将list数据根据行转换为二维数组
   downloadList.forEach((item, i) => {
+    item['isMale'] = item['isMale'] == 2 ? '女' : '男'
     data.push([]);
     for (let key in item) {
       data[i + 1].push(item[key]);
